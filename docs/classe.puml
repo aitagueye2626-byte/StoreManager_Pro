@@ -1,0 +1,131 @@
+@startuml Diagramme de Classes
+
+
+
+class Utilisateur {
+    id
+    nom
+    prenom
+    email
+    motDePasse
+    role
+}
+
+class Produit {
+    id
+    nom
+    description
+    categorie
+    prix
+    seuilAlerte
+}
+
+class Stock {
+    id
+    quantiteDisponible
+    dateMiseAJour
+}
+
+class Client {
+    id
+    nom
+    prenom
+    telephone
+    email
+    adresse
+}
+
+class Fournisseur {
+    id
+    nom
+    telephone
+    email
+    adresse
+}
+
+class Vente {
+    id
+    date
+    montantTotal
+    statut
+}
+
+class LigneVente {
+    id
+    quantite
+    prixUnitaire
+    sousTotal
+}
+
+class Paiement {
+    id
+    date
+    montant
+    modePaiement
+    statut
+}
+
+class Dette {
+    id
+    montant
+    montantRestant
+    date
+    statut
+}
+
+class Remboursement {
+    id
+    montant
+    date
+}
+
+class Approvisionnement {
+    id
+    date
+    montantTotal
+    statut
+}
+
+class LigneApprovisionnement {
+    id
+    quantite
+    prixUnitaire
+    sousTotal
+}
+
+
+class Inventaire {
+    id
+    date
+    statut
+}
+
+class LigneInventaire {
+    id
+    quantiteTheorique
+    quantiteReelle
+    ecart
+}
+
+Utilisateur "1" --> "0..*" Vente 
+Utilisateur "1" --> "0..*" Approvisionnement 
+Utilisateur "1" --> "0..*" Inventaire 
+
+Client "1" --> "0..*" Vente 
+
+Vente "1" *-- "1..*" LigneVente 
+LigneVente "*" --> "1" Produit 
+Vente "1" --> "1..*" Paiement 
+Vente "1" --> "0..1" Dette 
+
+Dette "1" *-- "0..*" Remboursement 
+Dette "*" --> "1" Client 
+
+Produit "1" *-- "1" Stock 
+Fournisseur "1" --> "0..*" Approvisionnement 
+Approvisionnement "1" *-- "1..*" LigneApprovisionnement
+LigneApprovisionnement "*" --> "1" Produit 
+Inventaire "1" *-- "1..*" LigneInventaire 
+LigneInventaire "*" --> "1" Produit 
+
+@enduml

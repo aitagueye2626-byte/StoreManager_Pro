@@ -1,0 +1,64 @@
+@startuml StoreManagerPro_Ventes_Dettes
+left to right direction
+actor "Chargé de Vente" as CV
+
+rectangle "StoreManager Pro" {
+
+    usecase "Effectuer une vente"       as EV
+    usecase "Gérer les dettes"          as GD
+    usecase "Se déconnecter"            as SD
+    usecase "Se connecter   "         as CN
+    usecase "Sélectionner client"       as SC
+    usecase "Sélectionner article"      as SA
+    usecase "Définir quantité"          as DQ
+    usecase "Ajouter au panier"         as AP
+    usecase "Calculer montant total"    as CMT
+    usecase "Choisir mode de règlement" as CMR
+    usecase "Saisir avance versée"      as SAV
+    usecase "Valider la vente"          as VV
+    usecase "Lister ventes & commandes" as LVC
+    usecase "Consulter lignes commande" as CLC
+
+    usecase "Lister dettes actives"     as LDA
+    usecase " client débiteur" as RCD
+    usecase "Consulter articles dette"  as CAD
+    usecase "Consulter paiements enregistrés" as CPE
+    usecase "Afficher statistique "          as RD
+    usecase "Client debiteur" as CRM
+    usecase "Saisir montant versement"  as SMV
+    usecase "Creance active" as SCP
+    usecase "Enregistrer remboursement" as ER
+}
+EV --> CN : <<include>>
+GD --> CN :<<include>>
+CV --> EV
+CV --> GD
+CV --> SD
+GD --> RD
+EV ..> SC  : <<include>>
+EV ..> SA  : <<include>>
+EV ..> CMR : <<include>>
+EV ..> VV  : <<include>>
+EV ..> LVC : <<include>>
+
+SA ..> DQ  : <<include>>
+SA ..> AP  : <<include>>
+AP ..> CMT : <<include>>
+
+CMR <.. SAV : <<extend>>
+LVC <.. CLC : <<extend>>
+
+
+GD ..> LDA : <<include>>
+GD ..> RCD  : <<include>>
+
+
+LDA <.. ER : <<extend>>
+LDA <.. CAD : <<extend>>
+LDA <.. CPE : <<extend>>
+
+RD ..> CRM : <<include>>
+RD ..> SMV : <<include>>
+RD ..> SCP : <<include>>
+
+@enduml

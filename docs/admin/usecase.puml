@@ -1,0 +1,78 @@
+@startuml usecase adminonistrateur
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Admin Boutique" as A
+
+rectangle "StoreManager Pro" {
+
+    usecase "Consulter le Tableau de Bord" as CTB
+
+    usecase "Afficher les statistiques" as AS
+    CTB .> AS : <<include>>
+
+    usecase "Consulter les ventes récentes" as CVR
+    usecase "Consulter les dettes du jour" as CDJ
+    usecase "Consulter les ruptures & alertes" as CRA
+    usecase "Consulter les livraisons du jour" as CLJ
+    usecase "Consulter les clients débiteurs" as CCD
+    usecase "Consulter le solde fournisseurs" as CSF
+
+    CTB <.. CVR : <<extend>>
+    CTB <.. CDJ : <<extend>>
+    CTB <.. CRA : <<extend>>
+    CTB <.. CLJ : <<extend>>
+    CTB <.. CCD : <<extend>>
+    CTB <.. CSF : <<extend>>
+
+    usecase "Gérer les Ventes et POS" as GVP
+    usecase "Enregistrer une vente" as EV
+    usecase "lister les ventes" as LV
+    usecase "voir statistiques" as VS
+    usecase "voir details vente" as VDV
+
+    GVP <.. EV : <<extend>>
+    GVP <.. LV : <<extend>>
+    GVP <.. VS : <<extend>>
+    LV <.. VDV : <<extend>>
+
+    usecase "Gérer les Dettes & Créances" as GDC
+    usecase "lister les dettes" as lD
+    usecase "Enregistrer un paiement" as EP
+    usecase "Effectuer un remboursement" as EF
+    usecase "Voir articles" as VA
+    usecase "afficher statistique des dettes" as ASD
+
+    lD <.. EP : <<extend>>
+    GDC <.. lD : <<extend>>
+    lD <.. EF : <<extend>>
+    lD <.. VA : <<extend>>
+    GDC <.. ASD : <<extend>>
+
+    usecase "Gérer les Approvisionnements" as GA
+    usecase "Réceptionner une livraison" as RL
+    usecase "Lister les commandes" as LC
+
+    LC <.. RL : <<extend>>
+    GA <.. LC : <<extend>>
+
+    usecase "enregistre le Catalogue & Tiers" as ECT
+    usecase "enregistrer un produit" as EPP
+    usecase "enregistre les clients" as ECC
+    usecase "enregistre les fournisseurs" as EFF
+
+    ECT <.. EPP : <<extend>>
+    ECT <.. ECC : <<extend>>
+    ECT <.. EFF : <<extend>>
+
+    usecase "Authentification" as UC_AUTH
+}
+
+A --> CTB
+A --> GVP
+A --> GDC
+A --> GA
+A --> ECT
+A --> UC_AUTH
+
+@enduml

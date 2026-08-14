@@ -1,0 +1,52 @@
+@startuml GestionProduitsTiers
+left to right direction
+actor "inventaire" as AB
+
+rectangle "StoreManager Pro - Gestion Produits & Tiers" {
+     usecase "Afficher les statistique" as af
+    usecase "Gestion Produits"          as GP
+    usecase "Ajouter un article"        as AA
+     usecase "Ajouter un client"        as cl
+    usecase "Lister catalogue"          as LC
+    usecase "Filtrer produits"          as FP
+    usecase "Consulter stock"           as CS
+    usecase "Gestion Clients"           as GC
+    usecase "Lister clients"            as LCl
+    usecase "Gestion Fournisseurs"      as GF
+    usecase "Lister fournisseurs"       as LF
+      usecase "Creer fournisseurs"       as cr
+    usecase "Consulter inventaire"      as CI
+    usecase "Se connecter"              as SC
+    usecase "Se déconnecter"            as SD
+
+   
+    usecase "Afficher bordeaux de livraison"   as br
+    usecase "Afficher approvissionnement" as Ap
+}
+AB -> Ap
+Ap ..> br
+AB -> af : <<include>>
+AB --> GP
+AB --> GC
+AB --> GF
+AB --> CI
+AB --> SD
+
+GP ..> AA  : <<include>>
+GP ..> LC  : <<include>>
+GP ..> SC  : <<include>>
+
+LC <.. FP  : <<extend>>
+LC <.. CS  : <<extend>>
+
+GC ..> LCl : <<include>>
+GC ..> SC  : <<include>>
+GC ..> cl  : <<include>>
+
+GF ..> LF  : <<include>>
+GF ..> cr  : <<include>>
+GF ..> SC  : <<include>>
+
+CI ..> SC  : <<include>>
+
+@enduml
