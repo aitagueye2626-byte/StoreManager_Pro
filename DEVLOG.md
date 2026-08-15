@@ -154,7 +154,7 @@ LigneCommande
 Dette
 Paiement
 Approvisionnement
-LigneApprovisionnement.....
+LigneApprovisionnement
 
 -Pour chaque entité, j'ai commencé par définir ses attributs à partir des informations identifiées dans le diagramme de classes et la base de données.
 -Les attributs ont été déclarés avec une visibilité adaptée afin de respecter le principe d'encapsulation.
@@ -179,3 +179,130 @@ LigneApprovisionnement.....
 📦 Résultat :
 
 -Les principales entités du projet sont maintenant créées dans src/Model/Entity/. Cette base permettra de passer à l'étape suivante : la création des Repositories et l'utilisation des requêtes préparées avec PDO.
+
+### 📌 Étape 2.2 — Repositories & SQL sécurisé
+
+**Heure de réalisation :** 11h00 – 13h00
+
+#### 🛠️ Ce qui a été fait
+
+Après la création des entités POO, j'ai créé la partie **Repository**. Le rôle des repositories est de faire le lien entre les objets PHP et la base de données.
+
+J'ai créé le dossier :
+
+`src/Repository/`
+
+avec les trois repositories suivants :
+
+- `ClientRepository.php`
+- `FournisseurRepository.php`
+- `ProduitRepository.php`
+
+Chaque repository utilise la connexion à la base de données grâce à `Database::getInstance()->getConnexion()`.
+
+J'ai également utilisé **PDO** pour exécuter les requêtes SQL.
+
+#### 👤 ClientRepository
+
+Dans `ClientRepository.php`, j'ai créé plusieurs méthodes permettant de gérer les clients :
+
+- `findAll()` : récupère tous les clients.
+- `findById()` : recherche un client grâce à son identifiant.
+- `rechercherParNom()` : recherche un client par son nom ou son numéro de téléphone.
+- `creer()` : ajoute un nouveau client dans la base de données.
+- `mettreAJour()` : modifie les informations d'un client.
+- `delete()` : supprime un client.
+
+J'ai aussi créé la méthode `hydrater()`. Elle permet de transformer une ligne récupérée depuis la base de données en objet `Client`.
+
+#### 🏢 FournisseurRepository
+
+Dans `FournisseurRepository.php`, j'ai créé les méthodes nécessaires pour gérer les fournisseurs :
+
+- `findAll()` : récupère la liste des fournisseurs.
+- `findById()` : recherche un fournisseur par son identifiant.
+- `creer()` : ajoute un fournisseur.
+- `mettreAJour()` : modifie les informations d'un fournisseur.
+- `delete()` : supprime un fournisseur.
+
+Comme pour les clients, la méthode `hydrater()` permet de transformer les données de la base en objet `Fournisseur`.
+
+#### 📦 ProduitRepository
+
+Dans `ProduitRepository.php`, j'ai créé les méthodes permettant de gérer les produits et leur stock :
+
+- `findAll()` : récupère tous les produits.
+- `findById()` : recherche un produit par son identifiant.
+- `findAllAvecStock()` : récupère les produits avec leur quantité disponible en stock.
+- `getQuantiteDisponible()` : récupère la quantité disponible d'un produit.
+- `decrementerStock()` : diminue la quantité disponible lors d'une vente.
+- `incrementerStock()` : augmente la quantité disponible lors d'un approvisionnement.
+- `creer()` : ajoute un produit et crée également son stock initial à zéro.
+- `mettreAJourPrix()` : permet de modifier le prix d'un produit.
+- `delete()` : supprime un produit.
+
+La méthode `hydrater()` permet ici de transformer une ligne de la base de données en objet `Produit`.
+
+#### 🔐 Sécurisation des requêtes SQL
+
+Pour les requêtes qui utilisent des données venant de l'utilisateur, j'ai utilisé :
+
+- `prepare()`
+- `execute()`
+
+avec des paramètres nommés comme `:id`, `:nom`, `:prix`, etc.
+
+Par exemple, pour rechercher un client par son identifiant, j'utilise une requête préparée au lieu de placer directement la valeur dans la requête SQL.
+
+Cela permet de mieux sécuriser les requêtes et de limiter les risques d'injection SQL.
+
+Pour les requêtes simples qui ne nécessitent pas de données provenant de l'utilisateur, j'ai utilisé `query()`.
+
+#### ⚠️ Difficultés rencontrées & solutions
+
+Une difficulté rencontrée concernait l'organisation des dossiers.
+
+Au départ, le dossier `Model` se trouvait au mauvais endroit. J'ai donc déplacé `Model` pour obtenir une organisation plus claire :
+
+`src/Model/Entity/`
+
+et
+
+`src/Repository/`
+
+J'ai également dû comprendre la différence entre une **Entity** et un **Repository**.
+
+Une Entity représente les données et le comportement d'un objet, par exemple un `Client` ou un `Produit`.
+
+Le Repository, lui, s'occupe de récupérer, créer, modifier ou supprimer ces données dans la base de données.
+
+Une autre difficulté était de comprendre la méthode `hydrater()`. J'ai compris qu'elle sert à prendre les données obtenues avec PDO et à créer un véritable objet PHP à partir de ces données.
+
+#### 💡 Ce que j'ai appris
+
+Cette étape m'a permis de mieux comprendre la séparation des responsabilités dans une application POO.
+
+J'ai compris que je ne dois pas mettre toutes les requêtes SQL directement dans les contrôleurs.
+
+Les repositories centralisent les accès à la base de données.
+
+J'ai également appris à utiliser les requêtes préparées PDO avec `prepare()` et `execute()`, ainsi qu'à transformer les résultats SQL en objets PHP grâce à l'hydratation.
+
+#### 📦 Résultat
+
+À la fin de cette étape, j'ai obtenu :
+
+```text
+src/
+├── Model/
+│   └── Entity/
+│       ├── Client.php
+│       ├── Fournisseur.php
+│       └── Produit.php
+│
+└── Repository/
+    ├── ClientRepository.php
+    ├── FournisseurRepository.php
+    └── ProduitRepository.php
+
+    

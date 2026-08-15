@@ -14,7 +14,7 @@ rectangle "StoreManager Pro - Gestion Produits & Tiers" {
     usecase "Lister clients"            as LCl
     usecase "Gestion Fournisseurs"      as GF
     usecase "Lister fournisseurs"       as LF
-      usecase "Creer fournisseurs"       as cr
+    usecase "Creer fournisseurs"       as cr
     usecase "Consulter inventaire"      as CI
     usecase "Se connecter"              as SC
     usecase "Se déconnecter"            as SD
