@@ -1,20 +1,19 @@
- 📓 Journal de Développement (DEVLOG)
+# 📓 Journal de Développement (DEVLOG)
 
-Nom & Prénom : AÏTA GUEYE  
-Projet : StoreManager Pro (ERP PHP/POO)  
-Période concernée : Phase 1 — Vendredi soir
-
----
-
- 1. 🗓️ Suivi Chronologique des Phases
-
- 🌃 Vendredi — Phase 1 : Analyse, Conception et Base de données
+Nom & Prénom : AÏTA GUEYE
+Projet : StoreManager Pro (ERP PHP/POO)
 
 ---
 
-📌 Étape 1.1 — Analyse et conception UML
+## 1. 🗓️ Suivi Chronologique des Phases
 
-**Heure de réalisation : 19h00 – 20h30
+### 🌃 Vendredi — Phase 1 : Analyse, Conception et Base de données
+
+---
+
+#### 📌 Étape 1.1 — Analyse et conception UML
+
+Heure de réalisation : 19h00 – 20h30
 
 🛠️ Ce qui a été fait
 
@@ -42,7 +41,7 @@ J'ai créé :
 - le diagramme de cas d'utilisation dans `docs/usecase.puml` ;
 - le diagramme de classes dans `docs/classe.puml`.
 
-J'ai également créé le fichier `DEVLOG.md` afin de suivre les différentes étapes de mon travail.
+J'ai également créé le fichier `DEVLOG.md` afin de suivre les différentes étapes de mon travail, ainsi qu'un dossier `docs/photosUML/` contenant des captures de mes diagrammes, à la demande du coach.
 
 ⚠️ Difficultés rencontrées
 
@@ -60,7 +59,9 @@ J'ai rencontré plusieurs difficultés pendant cette étape :
 
 Cette étape m'a permis de comprendre qu'il est important de bien analyser le projet avant de commencer à coder.
 
- 📌 Étape 1.2 — Création de la base de données
+---
+
+#### 📌 Étape 1.2 — Création de la base de données
 
 Heure de réalisation : 20h30 – 22h00
 
@@ -88,7 +89,7 @@ J'ai également :
 - créé la base `storemanager.db` ;
 - vérifié les tables et les données créées.
 
- ⚠️ Difficultés rencontrées
+⚠️ Difficultés rencontrées
 
 J'ai rencontré quelques problèmes pendant la création des bases de données :
 
@@ -96,4 +97,42 @@ J'ai rencontré quelques problèmes pendant la création des bases de données :
 - j'ai dû comprendre la différence entre `SERIAL` avec PostgreSQL et `AUTOINCREMENT` avec SQLite ;
 - j'ai découvert qu'avec SQLite les clés étrangères doivent être activées avec :
 
+```sql
 PRAGMA foreign_keys = ON;
+```
+
+💡 Ce que j'ai appris
+
+Cette étape m'a permis de comprendre les différences pratiques entre deux moteurs de base de données, et l'importance des contraintes (clés étrangères, `CHECK`) pour garantir la cohérence des données dès la conception.
+
+---
+
+#### 📌 Étape 1.3 — Singleton Database & Fallback automatique
+
+Heure de réalisation : 22h00 – 23h00
+
+🛠️ Ce qui a été fait
+
+Une fois les deux bases de données prêtes, j'ai créé la classe `Database` dans `src/Core/database.php`, en suivant le patron de conception Singleton : une seule instance de connexion est créée pour toute l'application, et tout le monde y accède via `Database::getInstance()`.
+
+Cette classe essaie d'abord de se connecter à PostgreSQL. Si la connexion échoue (serveur non lancé, base absente, etc.), elle rattrape l'erreur avec un `try/catch` et bascule automatiquement sur la base SQLite de secours (`storemanager.db`), sans faire planter l'application.
+
+J'ai testé les deux cas manuellement :
+
+- avec PostgreSQL actif → la connexion utilise bien `pgsql` ;
+- avec PostgreSQL arrêté (`sudo service postgresql stop`) → la connexion bascule bien sur `sqlite`.
+
+⚠️ Difficultés rencontrées
+
+Cette étape a été la plus longue à cause de plusieurs petits problèmes liés à l'environnement, plutôt qu'au code lui-même :
+
+- ma base PostgreSQL `approvisionnement` contenait déjà d'anciennes tables d'un précédent exercice (gestion scolaire), ce qui m'a fait croire un moment que mes données avaient été effacées, alors qu'en réalité mon script n'avait tout simplement jamais fini de s'exécuter avec succès dessus ;
+- lors de la configuration de la connexion SQLite dans l'extension VS Code, j'ai laissé un backslash (`\`) dans le chemin au lieu d'un slash (`/`), ce qui a créé un fichier avec un nom incorrect au lieu de le placer dans le bon dossier ;
+- PHP affichait une erreur `could not find driver` lors du test du fallback SQLite : le module `php-sqlite3` n'était pas installé sur ma machine, alors que l'outil en ligne de commande `sqlite3` l'était déjà. J'ai compris que ce sont deux paquets totalement différents : l'un permet de manipuler SQLite depuis le terminal, l'autre permet à PHP de le faire ;
+- j'ai dû vérifier que `PRAGMA foreign_keys = ON;` était bien exécuté à chaque connexion SQLite dans le code PHP, en plus du script SQL, car cette option ne se mémorise jamais dans le fichier `.db` ;
+- petite erreur de casse lors du commit Git : j'avais tapé `Database.php` avec un D majuscule alors que mon fichier s'appelle `database.php`, ce qui a été refusé par Git (sensible à la casse sous Linux).
+
+💡 Ce que j'ai appris
+
+Cette étape m'a fait comprendre l'intérêt réel du patron Singleton : centraliser la connexion en un seul point évite d'ouvrir plusieurs connexions inutiles. J'ai aussi compris que le fallback n'est utile que si on le teste vraiment en conditions réelles (en coupant le service PostgreSQL), pas seulement en le lisant dans le code. Enfin, j'ai réalisé l'importance de vérifier les chemins de fichiers précisément (majuscules, séparateurs, emplacement réel) avant de chercher une explication plus compliquée à une erreur.
+
