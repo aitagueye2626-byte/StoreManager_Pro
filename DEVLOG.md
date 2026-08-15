@@ -136,3 +136,46 @@ Cette étape a été la plus longue à cause de plusieurs petits problèmes lié
 
 Cette étape m'a fait comprendre l'intérêt réel du patron Singleton : centraliser la connexion en un seul point évite d'ouvrir plusieurs connexions inutiles. J'ai aussi compris que le fallback n'est utile que si on le teste vraiment en conditions réelles (en coupant le service PostgreSQL), pas seulement en le lisant dans le code. Enfin, j'ai réalisé l'importance de vérifier les chemins de fichiers précisément (majuscules, séparateurs, emplacement réel) avant de chercher une explication plus compliquée à une erreur.
 
+📌 Étape 2.1 — Création des entités POO
+
+Heure de réalisation : 09h00 – 11h00
+
+🛠️ Ce qui a été fait :
+
+-Création du dossier src/Model/Entity/ pour regrouper les différentes entités du projet.
+-Création des premières classes PHP correspondant aux éléments principaux de l'application :
+
+Utilisateur
+Produit
+Client
+Fournisseur
+Commande
+LigneCommande
+Dette
+Paiement
+Approvisionnement
+LigneApprovisionnement.....
+
+-Pour chaque entité, j'ai commencé par définir ses attributs à partir des informations identifiées dans le diagramme de classes et la base de données.
+-Les attributs ont été déclarés avec une visibilité adaptée afin de respecter le principe d'encapsulation.
+-J'ai ajouté les constructeurs nécessaires pour initialiser les objets.
+-J'ai commencé à utiliser les méthodes permettant de manipuler les données des objets.
+-Cette étape permet de préparer la structure POO qui sera utilisée ensuite par les repositories et les services.
+
+
+⚠️ Difficultés rencontrées :
+
+-Comprendre comment transformer une table de la base de données en une classe PHP.
+-Comprendre la différence entre un attribut et une méthode.
+-Comprendre pourquoi les attributs ne doivent pas être directement accessibles depuis l'extérieur de la classe.
+-Déterminer quels attributs appartiennent à chaque entité.
+-Comprendre les relations entre les différentes entités, notamment entre Commande et LigneCommande, ainsi qu'entre Approvisionnement et LigneApprovisionnement.
+-Comprendre comment créer un objet à partir d'une classe avec new.
+
+💡 Ce que j'ai appris :
+
+-Cette étape m'a permis de mieux comprendre les bases de la programmation orientée objet en PHP. J'ai compris qu'une classe représente un élément de mon application et qu'un objet est une instance de cette classe. J'ai également commencé à comprendre l'intérêt de l'encapsulation, des constructeurs et des méthodes pour organiser correctement le code.
+
+📦 Résultat :
+
+-Les principales entités du projet sont maintenant créées dans src/Model/Entity/. Cette base permettra de passer à l'étape suivante : la création des Repositories et l'utilisation des requêtes préparées avec PDO.
