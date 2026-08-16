@@ -405,3 +405,29 @@ Cette étape m'a fait comprendre que je ne dois jamais assumer que mon entité e
 📦 Résultat
 
 Le module Gestion des Dettes est fonctionnel : registre des dettes actives avec recherche par client, tiroirs dépliables pour consulter les articles de la vente et l'historique des paiements, et formulaire de remboursement (total ou partiel, avec raccourcis "Tout solder" / "50%") qui met à jour le solde et le statut de la dette en base.
+
+#### 📌 Étape 3.2 — Approvisionnements & Réception BL
+
+Heure de réalisation : 11h30 – 13h30
+
+🛠️ Ce qui a été fait
+
+J'ai créé `SupplyService.php`, qui contient toute la logique de l'approvisionnement : lister les bons de livraison en attente et déjà réceptionnés (avec le nom du fournisseur et le détail des lignes), et surtout traiter la réception d'un bon de livraison. La réception incrémente le stock de chaque produit concerné via `ProduitRepository::incrementerStock()`, puis fait passer le bon de livraison au statut `RECEPTIONNE` — le tout sous une transaction PDO, pour garantir que soit tout est appliqué, soit rien ne l'est.
+
+La consigne ne demandant que 2 livrables pour cette étape (`SupplyService.php` et le volet de réception), j'ai regroupé toutes les requêtes SQL directement dans le service plutôt que de créer un Repository séparé — contrairement aux étapes précédentes (Client, Fournisseur, Produit, Dette) où la séparation Repository/Service avait été respectée.
+
+J'ai créé `views/supplies/index.php` comme volet de réception : un registre listant tous les bons de livraison, avec un tiroir dépliable "Lignes" pour voir le détail des produits, et pour les bons encore en attente, un tiroir "Réceptionner" avec un bouton de validation qui déclenche la mise à jour du stock.
+
+⚠️ Difficultés rencontrées
+
+J'ai réalisé que ma table `ligne_approvisionnement` ne contient qu'une colonne `quantite` (la quantité commandée), sans colonne séparée pour la quantité réellement livrée — alors que ma maquette HTML montrait un champ modifiable "Qté Reçue". J'ai choisi de simplifier : la quantité reçue est toujours considérée égale à la quantité commandée, sans champ modifiable, plutôt que d'ajouter une nouvelle colonne à ce stade avancé du projet.
+
+J'ai aussi eu une confusion de fichiers en testant ma vue : le contenu réellement exécuté ne correspondait pas à celui que j'avais préparé (variable `$approvisionnements` introuvable, aucun style appliqué), ce qui montrait qu'un ancien brouillon traînait encore au même endroit. J'ai dû supprimer le fichier existant avant de remettre le bon en place, pour être certaine de ne pas mélanger deux versions différentes.
+
+💡 Ce que j'ai appris
+
+Cette étape m'a confirmé l'intérêt des transactions SQL dès qu'une action métier touche plusieurs tables liées (ici, la table `approvisionnement` et potentiellement plusieurs lignes de `stock` en même temps). J'ai aussi appris à toujours vérifier le contenu réel d'un fichier avant de chercher une erreur compliquée — un simple `wc -l` ou `grep` permet de confirmer rapidement qu'on travaille bien sur la bonne version d'un fichier.
+
+📦 Résultat
+
+Le module Approvisionnement est fonctionnel : registre des bons de livraison avec leur statut, détail des produits par bon, et réception en un clic qui met à jour le stock automatiquement et fait passer le bon au statut RECEPTIONNE.
