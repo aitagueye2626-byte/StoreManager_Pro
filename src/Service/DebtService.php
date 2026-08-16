@@ -3,17 +3,12 @@
 use App\Core\Database;
 use PDO;
 
-/**
- * Levée quand le montant du remboursement demandé est invalide :
- * négatif, nul, ou supérieur au solde restant de la dette.
- */
+
 class MontantRemboursementInvalideException extends \Exception
 {
 }
 
-/**
- * DebtService - Logique métier du remboursement d'une dette.
- */
+
 class DebtService
 {
     private PDO $pdo;

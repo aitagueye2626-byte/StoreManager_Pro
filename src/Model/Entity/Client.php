@@ -8,6 +8,7 @@ class Client
     private string $telephone;
     private ?string $email;
     private ?string $adresse;
+    private float $limiteCredit;
 
     public function __construct(
         int $id,
@@ -15,7 +16,8 @@ class Client
         ?string $prenom,
         string $telephone,
         ?string $email,
-        ?string $adresse
+        ?string $adresse,
+        float $limiteCredit = 150000
     ) {
         $this->id = $id;
         $this->nom = $nom;
@@ -23,6 +25,7 @@ class Client
         $this->telephone = $telephone;
         $this->email = $email;
         $this->adresse = $adresse;
+        $this->limiteCredit = $limiteCredit;
     }
 
     public function getId(): int
@@ -53,6 +56,11 @@ class Client
     public function getAdresse(): ?string
     {
         return $this->adresse;
+    }
+
+    public function getLimiteCredit(): float
+    {
+        return $this->limiteCredit;
     }
 
     public function setTelephone(string $telephone): void

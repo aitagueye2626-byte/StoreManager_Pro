@@ -1,7 +1,6 @@
 <?php
 
 use App\Core\Database;
-use PDO;
 
 class ClientRepository
 {
@@ -20,7 +19,8 @@ class ClientRepository
             $ligne['prenom'] ?? null,
             $ligne['telephone'],
             $ligne['email'] ?? null,
-            $ligne['adresse'] ?? null
+            $ligne['adresse'] ?? null,
+            (float) ($ligne['limite_credit'] ?? 150000)
         );
     }
 
@@ -56,23 +56,25 @@ class ClientRepository
         string $telephone,
         ?string $prenom = null,
         ?string $email = null,
-        ?string $adresse = null
+        ?string $adresse = null,
+        float $limiteCredit = 150000
     ): Client {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO client (nom, prenom, telephone, email, adresse)
-             VALUES (:nom, :prenom, :telephone, :email, :adresse)'
+            'INSERT INTO client (nom, prenom, telephone, email, adresse, limite_credit)
+             VALUES (:nom, :prenom, :telephone, :email, :adresse, :limite_credit)'
         );
         $stmt->execute([
-            'nom'       => $nom,
-            'prenom'    => $prenom,
-            'telephone' => $telephone,
-            'email'     => $email,
-            'adresse'   => $adresse,
+            'nom'           => $nom,
+            'prenom'        => $prenom,
+            'telephone'     => $telephone,
+            'email'         => $email,
+            'adresse'       => $adresse,
+            'limite_credit' => $limiteCredit,
         ]);
 
         $nouvelId = (int) $this->pdo->lastInsertId();
 
-        return new Client($nouvelId, $nom, $prenom, $telephone, $email, $adresse);
+        return new Client($nouvelId, $nom, $prenom, $telephone, $email, $adresse, $limiteCredit);
     }
 
     public function mettreAJour(Client $client): void

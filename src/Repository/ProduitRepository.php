@@ -1,7 +1,6 @@
 <?php
 
 use App\Core\Database;
-use PDO;
 
 class ProduitRepository
 {

@@ -95,12 +95,14 @@ CREATE TABLE dette (
     statut           TEXT NOT NULL DEFAULT 'NON SOLDEE' CHECK (statut IN ('NON SOLDEE', 'SOLDEE'))
 );
 
+
 CREATE TABLE remboursement (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     dette_id    INTEGER NOT NULL REFERENCES dette(id) ON DELETE CASCADE,
     montant     NUMERIC NOT NULL CHECK (montant > 0),
     date        TEXT NOT NULL DEFAULT (datetime('now'))
 );
+ALTER TABLE remboursement ADD COLUMN mode_paiement VARCHAR(30) NOT NULL DEFAULT 'Especes' CHECK (mode_paiement IN ('Especes', 'Orange Money', 'Wave', 'Virement'));
 
 CREATE TABLE approvisionnement (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -236,3 +238,59 @@ INSERT INTO ligne_inventaire (inventaire_id, produit_id, quantite_theorique, qua
 ((SELECT id FROM inventaire LIMIT 1), (SELECT id FROM produit WHERE nom = 'Bidon d''huile 5L'), 5, 5),
 ((SELECT id FROM inventaire LIMIT 1), (SELECT id FROM produit WHERE nom = 'Carton de savon'), 3, 2),
 ((SELECT id FROM inventaire LIMIT 1), (SELECT id FROM produit WHERE nom = 'Huile de palme 1L'), 0, 0);
+
+
+UPDATE client SET limite_credit = 300000 WHERE nom = 'Awa' OR nom = 'Cisse';
+UPDATE client SET limite_credit = 120000 WHERE nom = 'Diallo';
+UPDATE client SET limite_credit = 200000 WHERE nom = 'Diouf';
+UPDATE client SET limite_credit = 150000 WHERE nom = 'Ndiaye';
+UPDATE client SET limite_credit = 250000 WHERE nom = 'Sarr';
+
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'dette'
+ORDER BY ordinal_position;
+
+SELECT
+    conname,
+    pg_get_constraintdef(oid)
+FROM pg_constraint
+WHERE conrelid = 'dette'::regclass;
+
+SELECT
+                d.id,
+                d.vente_id,
+                d.client_id,
+                d.montant,
+                d.montant_restant,
+                d.statut,
+                c.nom,
+                c.prenom,
+                c.telephone
+             FROM public.dette d
+             INNER JOIN public.client c ON c.id = d.client_id
+             WHERE d.statut = 'NON SOLDEE'
+             ORDER BY d.id DESC;
+
+             SELECT
+                d.id,
+                d.vente_id,
+                d.client_id,
+                d.montant,
+                d.montant_restant,
+                d.statut,
+                c.nom,
+                c.prenom,
+                c.telephone
+             FROM public.dette d
+             INNER JOIN public.client c ON c.id = d.client_id
+             WHERE d.id = :id
+
+             SELECT
+    id,
+    vente_id,
+    client_id,
+    montant,
+    montant_restant,
+    statut
+FROM public.dette;
