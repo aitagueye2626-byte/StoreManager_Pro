@@ -345,3 +345,29 @@ J’ai pu implémenter la logique de validation d’une vente en prenant en comp
 J’ai également travaillé sur la sécurisation des opérations en base de données grâce aux transactions PDO. Ainsi, si une erreur survient pendant la vente, les modifications sont annulées avec rollBack(), ce qui évite les incohérences dans la base de données.
 La gestion de la limite de crédit m’a permis de mieux comprendre l’importance des règles métier dans une application de gestion commerciale. Il ne suffit pas d’enregistrer une vente : il faut aussi vérifier que le client respecte les conditions définies par la boutique.
 Cette étape était donc importante, car elle constitue une base solide pour la suite du projet, notamment l’intégration du service dans le contrôleur, l’affichage des résultats dans l’interface et la gestion plus complète des erreurs utilisateur.
+
+📎 Complément — Limite de crédit par client
+
+En vérifiant mon fichier HTML de maquette original, j'ai découvert que la limite de crédit n'est pas une valeur unique pour tous les clients, mais un champ propre à chaque client (`limite_credit`), affiché dynamiquement dans le formulaire de vente selon le client sélectionné. J'ai donc ajouté une colonne `limite_credit` à ma table `client` (PostgreSQL et SQLite), ainsi qu'un champ, un paramètre de constructeur et un getter correspondants dans mon entité `Client`. `VenteService` compare la dette active du client (somme des `montant_restant` de ses dettes non soldées) additionnée du reste à payer de la nouvelle vente à cette limite avant d'accepter une vente à crédit.
+
+### 📌 Étape 2.4 — Controller POS & Vue Caisse
+
+Heure de réalisation : 17h00 – 20h00
+
+🛠️ Ce qui a été fait
+
+J'ai créé `POSController.php`, qui prépare les données nécessaires à l'affichage (liste des clients, produits avec leur stock, ventes récentes avec le détail de leurs lignes) puis transmet l'affichage à la vue `views/pos/index.php`. Le Controller traite aussi la soumission du formulaire de vente en appelant `VenteService::validerVente()`, et transforme les exceptions métier (stock insuffisant, limite de crédit dépassée) en messages affichés à l'utilisateur après redirection.
+
+Pour la vue, j'ai repris fidèlement le CSS et le JavaScript de ma maquette HTML originale : pavé numérique tactile pour la saisie, gestion du panier en JavaScript côté navigateur, affichage dynamique de la limite de crédit selon le client sélectionné, et tiroir dépliable affichant le détail de chaque vente dans le registre.
+
+⚠️ Difficultés rencontrées
+
+J'ai confondu par erreur le contenu du Controller et celui de la vue en les collant dans le mauvais fichier, ce qui provoquait une erreur de classe déclarée deux fois. J'ai aussi eu un affichage qui s'interrompait au milieu du formulaire à cause d'un appel à une méthode `getSeuilAlerte()` qui n'existe pas sur mon entité `Produit` ; je l'ai remplacée par un seuil fixe. J'ai également utilisé `dirname(__DIR__, 2)` plutôt qu'une concaténation de chemins avec `/../../` pour que le Controller retrouve correctement le fichier de la vue depuis `src/Controller/`.
+
+💡 Ce que j'ai appris
+
+Le modèle MVC prend tout son sens une fois qu'on le voit fonctionner concrètement : le Controller prépare des données pures (tableaux, objets), et c'est seulement au moment du `require` de la vue que ces données sont transformées en HTML — les deux responsabilités restent séparées.
+
+📦 Résultat
+
+Le module Vente / POS est fonctionnel de bout en bout : sélection d'un client avec affichage de sa limite de crédit, ajout d'articles au panier avec vérification du stock, calcul du total en temps réel, validation de la vente avec contrôle de crédit et transaction SQL, et registre des ventes avec détail consultable.
