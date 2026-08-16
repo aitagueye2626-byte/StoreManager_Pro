@@ -322,6 +322,7 @@ src/Repository/ProduitRepository.php
 Mettre en place la logique métier de validation d’une vente au niveau du point de vente. Cette logique doit permettre de vérifier le panier, calculer le montant total, contrôler le stock, gérer les paiements partiels, créer une dette si nécessaire et vérifier la limite de crédit du client, tout en garantissant la cohérence des données grâce à une transaction SQL.
 
 📝 Résumé de l’étape 2.3
+-**Horaire de réalisation :** (14h00 - 17h00) 
 Durant cette étape, j’ai développé le service VenteService, qui représente une partie centrale du module de vente.
 Ce service permet de valider une vente en prenant en compte :
 
@@ -340,6 +341,8 @@ Ce service permet de valider une vente en prenant en compte :
 ---LimiteCreditDepasseeException
 
 Elles permettent de gérer plus clairement les erreurs métier liées au stock et au crédit client.
+#### 💡 Ce que j'ai appris
+
 Cette deuxième phase m’a permis de mettre en place une partie essentielle du module de vente : le service métier VenteService.
 J’ai pu implémenter la logique de validation d’une vente en prenant en compte le panier, le calcul du montant total, la vérification du stock, la décrémentation des produits, la gestion du paiement partiel et la création d’une dette lorsque le client ne règle pas la totalité.
 J’ai également travaillé sur la sécurisation des opérations en base de données grâce aux transactions PDO. Ainsi, si une erreur survient pendant la vente, les modifications sont annulées avec rollBack(), ce qui évite les incohérences dans la base de données.
