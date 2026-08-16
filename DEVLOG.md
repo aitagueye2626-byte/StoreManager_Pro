@@ -305,4 +305,43 @@ src/
     ├── FournisseurRepository.php
     └── ProduitRepository.php
 
-    
+    📌 Étape 2.3 — Service Métier Vente POS & Transaction SQL
+-Horaire de réalisation : 14h00 – 17h00
+-Livrable principal : src/Service/VenteService.php
+Fichiers concernés :
+
+src/Service/VenteService.php
+src/Core/Database.php
+src/Model/Entity/Client.php
+src/Model/Entity/Produit.php
+src/Repository/ClientRepository.php
+src/Repository/ProduitRepository.php
+
+-Objectif de l’étape :
+
+Mettre en place la logique métier de validation d’une vente au niveau du point de vente. Cette logique doit permettre de vérifier le panier, calculer le montant total, contrôler le stock, gérer les paiements partiels, créer une dette si nécessaire et vérifier la limite de crédit du client, tout en garantissant la cohérence des données grâce à une transaction SQL.
+
+📝 Résumé de l’étape 2.3
+Durant cette étape, j’ai développé le service VenteService, qui représente une partie centrale du module de vente.
+Ce service permet de valider une vente en prenant en compte :
+
+-le panier ;
+-la disponibilité des produits ;
+-le calcul du montant total ;
+-le paiement total ou partiel ;
+-la décrémentation du stock ;
+-la création d’un paiement ;
+-la création d’une dette si nécessaire ;
+-le contrôle de la limite de crédit du client.
+-J’ai utilisé une transaction SQL avec PDO afin de garantir la cohérence des données. Si une erreur survient pendant le traitement, toutes les modifications sont annulées grâce à rollBack().
+-J’ai également mis en place deux exceptions personnalisées :
+
+---StockInsuffisantException
+---LimiteCreditDepasseeException
+
+Elles permettent de gérer plus clairement les erreurs métier liées au stock et au crédit client.
+Cette deuxième phase m’a permis de mettre en place une partie essentielle du module de vente : le service métier VenteService.
+J’ai pu implémenter la logique de validation d’une vente en prenant en compte le panier, le calcul du montant total, la vérification du stock, la décrémentation des produits, la gestion du paiement partiel et la création d’une dette lorsque le client ne règle pas la totalité.
+J’ai également travaillé sur la sécurisation des opérations en base de données grâce aux transactions PDO. Ainsi, si une erreur survient pendant la vente, les modifications sont annulées avec rollBack(), ce qui évite les incohérences dans la base de données.
+La gestion de la limite de crédit m’a permis de mieux comprendre l’importance des règles métier dans une application de gestion commerciale. Il ne suffit pas d’enregistrer une vente : il faut aussi vérifier que le client respecte les conditions définies par la boutique.
+Cette étape était donc importante, car elle constitue une base solide pour la suite du projet, notamment l’intégration du service dans le contrôleur, l’affichage des résultats dans l’interface et la gestion plus complète des erreurs utilisateur.
