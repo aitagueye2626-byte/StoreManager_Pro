@@ -117,7 +117,7 @@ Une fois les deux bases de données prêtes, j'ai créé la classe `Database` da
 
 Cette classe essaie d'abord de se connecter à PostgreSQL. Si la connexion échoue (serveur non lancé, base absente, etc.), elle rattrape l'erreur avec un `try/catch` et bascule automatiquement sur la base SQLite de secours (`storemanager.db`), sans faire planter l'application.
 
-J'ai testé les deux cas manuellement :
+J'ai testé les deux cas manuellement :  
 
 - avec PostgreSQL actif → la connexion utilise bien `pgsql` ;
 - avec PostgreSQL arrêté (`sudo service postgresql stop`) → la connexion bascule bien sur `sqlite`.
@@ -374,3 +374,34 @@ Le modèle MVC prend tout son sens une fois qu'on le voit fonctionner concrètem
 📦 Résultat
 
 Le module Vente / POS est fonctionnel de bout en bout : sélection d'un client avec affichage de sa limite de crédit, ajout d'articles au panier avec vérification du stock, calcul du total en temps réel, validation de la vente avec contrôle de crédit et transaction SQL, et registre des ventes avec détail consultable.
+
+
+### 🚀 Dimanche — Phase 3 : Dettes, Approvisionnements, Rôles & Clôture
+
+---
+
+#### 📌 Étape 3.1 — Gestion des Dettes & Remboursements
+
+Heure de réalisation : 09h00 – 11h30
+
+🛠️ Ce qui a été fait
+
+J'ai créé `DetteRepository.php`, qui centralise l'accès SQL aux tables `dette` et `remboursement` : récupération des dettes actives avec les informations du client associé, historique des remboursements déjà effectués, détail des articles de la vente à crédit d'origine, et statistiques globales (créances actives, nombre de clients débiteurs, total recouvré).
+
+J'ai créé `DebtService.php`, qui contient la vraie logique métier du remboursement : vérifier que le montant versé est positif et ne dépasse pas le solde restant dû, enregistrer le versement, diminuer le solde de la dette, et faire automatiquement passer son statut à `SOLDEE` dès que le solde atteint zéro — le tout sous une transaction PDO (`beginTransaction`, `commit`, `rollBack`), comme pour `VenteService`.
+
+Comme la charte ne demandait que 3 fichiers pour cette étape (pas de Controller listé, contrairement au module Vente), j'ai rendu `views/dettes/index.php` autonome : il fait lui-même ses `require`, récupère ses données via `DetteRepository`, et traite directement la soumission du formulaire de remboursement en appelant `DebtService`, avant d'afficher le HTML.
+
+⚠️ Difficultés rencontrées
+
+- en comparant mon entité `Remboursement` à ma vraie table `remboursement`, j'ai découvert qu'il manquait la colonne `mode_paiement`, alors que ma maquette HTML montrait bien un sélecteur "Canal de Paiement" (Orange Money, Wave...) dans le formulaire de remboursement. J'ai dû l'ajouter avec `ALTER TABLE` sur mes deux bases ;
+- j'ai eu une confusion de fichiers , ce qui m'a fait perdre du temps à déboguer une erreur qui n'existait pas réellement dans le code, avant de repartir proprement de zéro sur ces 3 fichiers précis ;
+- j'ai remarqué que mes deux vues (`views/pos/index.php` et `views/dettes/index.php`) portent le même nom de fichier — ce n'est pas un problème pour PHP puisque le chemin complet les différencie, mais ça demande de la vigilance dans VS Code pour ne pas confondre les onglets ouverts.
+
+💡 Ce que j'ai appris
+
+Cette étape m'a fait comprendre que je ne dois jamais assumer que mon entité et ma table correspondent parfaitement colonne par colonne : c'est le rôle du Repository de faire ce pont, même quand les noms diffèrent. J'ai aussi confirmé l'intérêt de vérifier ma vraie maquette HTML avant de coder une fonctionnalité, plutôt que de deviner ce qu'elle devrait contenir.
+
+📦 Résultat
+
+Le module Gestion des Dettes est fonctionnel : registre des dettes actives avec recherche par client, tiroirs dépliables pour consulter les articles de la vente et l'historique des paiements, et formulaire de remboursement (total ou partiel, avec raccourcis "Tout solder" / "50%") qui met à jour le solde et le statut de la dette en base.
