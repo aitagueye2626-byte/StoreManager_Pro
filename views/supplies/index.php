@@ -1,4 +1,6 @@
 <?php
+require dirname(__DIR__, 2) . '/src/Service/AuthManager.php';
+
 require dirname(__DIR__, 2) . '/src/Core/database.php';
 require dirname(__DIR__, 2) . '/src/Model/Entity/Fournisseur.php';
 require dirname(__DIR__, 2) . '/src/Model/Entity/Produit.php';
@@ -12,6 +14,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 $supplyService = new SupplyService();
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approvisionnement_id'])) {
     try {

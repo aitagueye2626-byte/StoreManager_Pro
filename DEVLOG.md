@@ -431,3 +431,71 @@ Cette étape m'a confirmé l'intérêt des transactions SQL dès qu'une action m
 📦 Résultat
 
 Le module Approvisionnement est fonctionnel : registre des bons de livraison avec leur statut, détail des produits par bon, et réception en un clic qui met à jour le stock automatiquement et fait passer le bon au statut RECEPTIONNE.
+
+
+## Phase 3 — Authentification & Gestion des accès
+
+### Step 3.3 — AuthManager & Contrôle des Rôles
+**Horaire : 14h30 - 16h30**
+
+#### Objectif
+Mettre en place le système d'authentification de l'application et contrôler
+l'accès aux différents modules selon le rôle de l'utilisateur connecté.
+
+#### Travail réalisé
+
+- Création du service `src/Service/AuthManager.php`.
+- Mise en place de l'authentification par profil.
+- Gestion des quatre rôles :
+  - **Admin**
+  - **Vente**
+  - **Stock**
+  - **Inventaire**
+- Vérification dans la base de données qu'un utilisateur correspondant au
+  rôle sélectionné est actif.
+- Stockage des informations de l'utilisateur connecté dans la session :
+  - `utilisateur_id`
+  - `utilisateur_nom`
+  - `role`
+- Mise en place de la déconnexion.
+- Vérification de l'état de connexion avec `estConnecte()`.
+- Récupération du rôle de l'utilisateur connecté avec `getRoleConnecte()`.
+- Récupération de l'identifiant de l'utilisateur connecté avec
+  `getUtilisateurIdConnecte()`.
+- Mise en place des restrictions d'accès aux modules selon le rôle.
+- Mise en place d'une vue par défaut pour chaque rôle.
+- Protection des routes avec `exigerAcces()`.
+- Création de `AuthController.php` pour gérer :
+  - l'affichage de la page de connexion ;
+  - le traitement de la connexion ;
+  - la déconnexion.
+- Création de la page de connexion permettant de sélectionner le profil.
+- Gestion des messages d'erreur lors d'une tentative de connexion invalide.
+- Redirection de l'utilisateur vers le module correspondant à son rôle après
+  connexion.
+
+#### Règles d'accès
+
+| Rôle | Modules accessibles | Vue par défaut |
+|---|---|---|
+| Admin | Tous les modules | POS |
+| Vente | POS, Dettes | POS |
+| Stock | Approvisionnements, Catalogue | Approvisionnements |
+| Inventaire | Catalogue | Catalogue |
+
+#### Routes ajoutées
+
+- `GET /connexion` → affichage de la page de connexion
+- `POST /connexion` → traitement de la connexion
+- `GET /deconnexion` → déconnexion de l'utilisateur
+
+#### Sécurité / contrôle des accès
+
+L'accès aux modules est contrôlé avant leur affichage.
+
+Un utilisateur non connecté est redirigé vers :
+
+`/connexion`
+
+Un utilisateur connecté mais ne possédant pas le rôle nécessaire reçoit une
+réponse HTTP `403 — Accès refusé`.
